@@ -77,6 +77,16 @@ configurations:
     debug console. See _Troubleshooting_ further down.
 - `ignore`: An optional array of glob patterns that errors should be ignored
     from (for example `**/vendor/**/*.php`)
+- `proxy`: All the settings for the proxy
+    - `allowMultipleSessions`: If the proxy should expect multiple
+      sessions/connections or not (default: `true`)
+    - `enable`: To enable this configuration or not (default: `false`)
+    - `host`: The IP address of the proxy. Supports host name, IP address,
+      or Unix domain socket. Ignored if xdebug.remote_connect_back is enabled.
+    - `key`: A unique key that allows the proxy to match requests to your
+      editor (default: `vsc`)
+    - `port`: The port where the adapter will register with the the proxy
+      (default: `9001`)
 - `xdebugSettings`: Allows you to override XDebug's remote debugging settings to
     fine tuning XDebug to your needs. For example, you can play with
     `max_children` and `max_depth` to change the max number of array and object
@@ -119,6 +129,7 @@ Features
 - Watches
 - Run as CLI
 - Run without debugging
+- Multi-user debugging
 
 Remote Host Debugging
 ---------------------
@@ -160,6 +171,8 @@ Troubleshooting
 - In your php.ini, set [`xdebug.remote_log = /path/to/logfile`][rLog]
     (make sure your webserver has write permissions to the file)
 - Set `"log": true` in your launch.json
+- For proxy related issues, you can test locally by download one from
+  [here][proxyDL].
 
 Contributing
 ------------
