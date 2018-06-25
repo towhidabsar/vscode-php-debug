@@ -4,6 +4,11 @@
   "eslint.enable": false,
   "editor.insertSpaces": true,
   "editor.tabSize": 4,
+  "markdownlint.config": {
+    "default": true,
+    "MD003": { "style": "setext_with_atx" },
+    "MD007": { "indent": 4 }
+  },
   "tslint.ignoreDefinitionFiles": true,
   "typescript.tsdk": "./node_modules/typescript/lib"
 }
