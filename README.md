@@ -1,7 +1,15 @@
 # PHP Debug Adapter for Visual Studio Code
 
-[![vs marketplace](https://img.shields.io/vscode-marketplace/v/felixfbecker.php-debug.svg?label=vs%20marketplace)](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) [![downloads](https://img.shields.io/vscode-marketplace/d/felixfbecker.php-debug.svg)](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) [![rating](https://img.shields.io/vscode-marketplace/r/felixfbecker.php-debug.svg)](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) [![windows build](https://img.shields.io/appveyor/ci/felixfbecker/vscode-php-debug/master.svg?label=windows+build)](https://ci.appveyor.com/project/felixfbecker/vscode-php-debug)
-[![macos/linux build](https://img.shields.io/travis/felixfbecker/vscode-php-debug/master.svg?label=macos/linux+build)](https://travis-ci.org/felixfbecker/vscode-php-debug) [![codecov](https://codecov.io/gh/felixfbecker/vscode-php-debug/branch/master/graph/badge.svg)](https://codecov.io/gh/felixfbecker/vscode-php-debug) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![chat: on gitter](https://badges.gitter.im/felixfbecker/vscode-php-debug.svg)](https://gitter.im/felixfbecker/vscode-php-debug?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![vs marketplace](https://img.shields.io/vscode-marketplace/v/felixfbecker.php-debug.svg?label=vs%20marketplace)][vsm]
+[![downloads](https://img.shields.io/vscode-marketplace/d/felixfbecker.php-debug.svg)][mvs]
+[![rating](https://img.shields.io/vscode-marketplace/r/felixfbecker.php-debug.svg)][mvs]
+[![windows build](https://img.shields.io/appveyor/ci/felixfbecker/vscode-php-debug/master.svg?label=windows+build)][appveyor]
+[![macos/linux build](https://img.shields.io/travis/felixfbecker/vscode-php-debug/master.svg?label=macos/linux+build)][travis]
+[![codecov](https://codecov.io/gh/felixfbecker/vscode-php-debug/branch/master/graph/badge.svg)][codecov]
+[![dependencies](https://gemnasium.com/felixfbecker/vscode-php-debug.svg)][dep]
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)][prettier]
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)][sRelease]
+[![chat: on gitter](https://badges.gitter.im/felixfbecker/vscode-php-debug.svg)][gChat]
 
 ![Demo GIF](images/demo.gif)
 
@@ -200,6 +208,58 @@ npm run build
 ```
 
 To debug the extension (run it in "server mode") ...
+Remote Host Debugging
+---------------------
+
+To debug a running application on a remote host, you need to tell XDebug to
+connect to a different IP than `localhost`. This can either be done by setting
+[`xdebug.remote_host`][rHost] to your IP or by setting
+[`xdebug.remote_connect_back = 1`][rcb] to make XDebug always connect back to
+the machine who did the web request. The latter is the only setting that
+supports multiple users debugging the same server and "just works" for web
+projects. Again, please see the [XDebug documentation][rComm] on the subject for
+more information.
+
+To make VS Code map the files on the server to the right files on your local
+machine, you have to set the `pathMappings` settings in your launch.json.
+Example:
+
+  ```json
+  // server -> local
+  "pathMappings": {
+    "/var/www/html": "${workspaceRoot}/www",
+    "/app": "${workspaceRoot}/app"
+  }
+  ```
+
+Please also note that setting any of the CLI debugging options will not work
+with remote host debugging, because the script is always launched locally. If
+you want to debug a CLI script on a remote host, you need to launch it manually
+from the command line.
+
+Troubleshooting
+---------------
+
+- Ask a question on [Gitter][gitter]
+- If you think you found a bug, [open an issue][issues]
+- Make sure you have the latest version of this extension and XDebug installed
+- Try out a simple PHP file to recreate the issue, for example from the
+    [testproject][testProj]
+- In your php.ini, set [`xdebug.remote_log = /path/to/logfile`][rLog]
+    (make sure your webserver has write permissions to the file)
+- Set `"log": true` in your launch.json
+
+Contributing
+------------
+
+To hack on this adapter, clone the repository and open it in VS Code. You need
+NodeJS and typings installed (`npm install -g typings`). Install dependencies by
+running `npm install` and `typings install`.
+
+You can debug the extension (run it in "server mode") by selecting the "Debug
+adapter" launch configuration and hitting `F5`. Then, open a terminal inside the
+project, and open the included testproject with VS Code while specifying the
+current directory as `extensionDevelopmentPath`:
 
 ```sh
 # launch the 'Debug Adapter'
@@ -245,6 +305,20 @@ export PYTHONPATH=/path/to/pydbgpproxy/pythonlib;$PYTHONPATH
 # defaults: -i 127.0.0.1:9001 -d 127.0.0.1:9000
 /path/to/pydbgpproxy
 ```
+VS Code will open an "Extension Development Host" with the debug adapter
+running. Open `.vscode/launch.json` and uncomment the `debugServer`
+configuration line. Hit `F5` to start a debugging session. Now you can debug the
+testproject like specified above and set breakpoints inside your first VS Code
+instance to step through the adapter code.
+
+The extension is written in TypeScript and compiled using a Gulpfile that first
+transpiles to ES6 and then uses Babel to specifically target VS Code's Node
+version. You can run the compile task through `npm run compile`, `gulp compile`
+or from VS Code with `Ctrl`+`Shift`+`B`. `npm run watch` / `gulp watch` enables
+incremental compilation.
+
+Tests are written with Mocha and can be run with `npm test`. The tests are run
+in CI on Linux and Windows against PHP 5.4, 5.6, 7.0 and XDebug 2.3, 2.4.
 
 [//]: # (These are reference links. They get stripped out when rendered.)
 [vsm]: <https://img.shields.io/vscode-marketplace/v/felixfbecker.php-debug.svg?label=vs%20marketplace>
