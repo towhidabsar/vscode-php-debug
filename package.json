@@ -209,6 +209,39 @@
                 "type": "boolean",
                 "description": "If true, will log all communication between VS Code and the adapter"
               },
+              "proxy": {
+                "type": "object",
+                "properties": {
+                  "allowMultipleSessions": {
+                    "enum": [
+                      0,
+                      1
+                    ],
+                    "description": "If the proxy should expect multiple sessions/connections or not. 1 ",
+                    "default": 1
+                  },
+                  "enable": {
+                    "type": "boolean",
+                    "description": "Wheather to enable usage of a proxy",
+                    "default": false
+                  },
+                  "host": {
+                    "type": "string",
+                    "description": "Selects the host where the debug client is running, you can either use a host name, IP address, or 'unix:///path/to/sock' for a Unix domain socket. This setting is ignored if xdebug.remote_connect_back is enabled.",
+                    "default": "127.0.0.1"
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "A unique key that allows the proxy to match requests to your editor",
+                    "default": "vsc"
+                  },
+                  "port": {
+                    "type": "number",
+                    "description": "The port where the adapter will register with the the proxy.",
+                    "default": 9001
+                  }
+                }
+              },
               "xdebugSettings": {
                 "type": "object",
                 "properties": {
