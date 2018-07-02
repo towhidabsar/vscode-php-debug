@@ -32,6 +32,9 @@ Windows) that needs to be installed on your server.
         Studio compiler version and place it in your PHP extension folder.
     - On Linux: Either download the source code as a tarball or
         [clone it with git][xDLSrc], then [compile it][xCompileSrc].
+    - On macOS: Install [`pecl`][pecl], probably either through
+      [homebrew][homebrew] or [macports][macports]. Then install with pecl.
+      `pecl install xdebug`
 2. [Configure PHP to use XDebug][xConf] by adding
     `zend_extension=path/to/xdebug` to your php.ini. The path of your php.ini is
     shown in your `phpinfo()` output under "Loaded Configuration File".
@@ -52,9 +55,8 @@ Windows) that needs to be installed on your server.
 
 ### VS Code Configuration
 
-In your project, go to the debugger and hit the little gear icon and choose
-_PHP_. A new launch configuration will be created for you with two
-configurations:
+In your project, go to the debugger and hit the gear icon and choose _PHP_. A
+new launch configuration will be created for you with two configurations:
 
 - **Listen for XDebug**
     This setting will simply start listening on the specified port (by default
@@ -155,10 +157,10 @@ Example:
   }
   ```
 
-Please also note that setting any of the CLI debugging options will not work
-with remote host debugging, because the script is always launched locally. If
-you want to debug a CLI script on a remote host, you need to launch it manually
-from the command line.
+> ### Note
+> Setting any of the CLI debugging options will not work with remote host
+> debugging as the script is always launched locally. To debug a CLI script on a
+> remote host, you'll need to launch it manually from the command line.
 
 Troubleshooting
 ---------------
@@ -173,37 +175,86 @@ Troubleshooting
 - Set `"log": true` in your launch.json
 - For proxy related issues, you can test locally by download one from
   [here][proxyDL].
+- For remote environments that connect through a gateway server (VPN, etc), the
+  proxy will need to be run on that server so it can pass along your IP to the
+  remote environment.
+- If the proxy is not returning back any information, make sure your ports are
+  correct. You can verify which port is open on your machine from the vpn.
+  (Example: double NAT network can required port == proxyPort)
 
 Contributing
 ------------
 
-To hack on this adapter, clone the repository and open it in VS Code. You need
-NodeJS and typings installed (`npm install -g typings`). Install dependencies by
-running `npm install` and `typings install`.
-
-You can debug the extension (run it in "server mode") by selecting the "Debug
-adapter" launch configuration and hitting `F5`. Then, open a terminal inside the
-project, and open the included testproject with VS Code while specifying the
-current directory as `extensionDevelopmentPath`:
+To begin hacking this adapter ...
 
 ```sh
-code testproject --extensionDevelopmentPath=.
+# clone the repository
+git clone git@github.com:felixfbecker/vscode-php-debug.git /path/to/folder
+
+# open it in VS Code
+code /path/to/folder
+
+# Install NodeJS
+# ¯\_(ツ)_/¯
+
+# Install typings
+npm install -g typings
+
+# Install dependencies
+npm install
+
+# Compile Typescript to Javascript
+npm run build
+# or
+# from VS Code with 'Ctrl+Shift+B'
 ```
 
-VS Code will open an "Extension Development Host" with the debug adapter
-running. Open `.vscode/launch.json` and uncomment the `debugServer`
-configuration line. Hit `F5` to start a debugging session. Now you can debug the
-testproject like specified above and set breakpoints inside your first VS Code
-instance to step through the adapter code.
+To debug the extension (run it in "server mode") ...
 
-The extension is written in TypeScript and compiled using a Gulpfile that first
-transpiles to ES6 and then uses Babel to specifically target VS Code's Node
-version. You can run the compile task through `npm run compile`, `gulp compile`
-or from VS Code with `Ctrl`+`Shift`+`B`. `npm run watch` / `gulp watch` enables
-incremental compilation.
+```sh
+# launch the 'Debug Adapter'
+# click on the debug button or hit 'F5'
 
-Tests are written with Mocha and can be run with `npm test`. The tests are run
-in CI on Linux and Windows against PHP 5.4, 5.6, 7.0 and XDebug 2.3, 2.4.
+# Open up the test project
+code testproject --extensionDevelopmentPath=.
+# or
+npm run start
+```
+
+Open `.vscode/launch.json` and uncomment the `debugServer` configuration line.
+Start the test project debugger by following the aforementioned steps. Set
+breakpoints inside your first VS Code instance to step through the adapter code.
+
+Tests are written with Mocha & run against PHP 5.4, 5.6, 7.0, & XDebug 2.3, 2.4.
+
+```sh
+# Run the tests
+npm test
+
+# Run a specific test
+# test name can be either the 'describe' or 'it' string
+npm test -- -g 'test name'
+```
+
+You can test proxy configurations by running a local proxy. You can download one
+of your choosing from [here][proxyDL]. Follow the instructions to properly run
+the proxy.
+> ### Note
+> The proxy is developed by ActiveState for their Komodo IDE. The link above is
+> for documentation written in v5.2 of the IDE. It is mostly relevant to the
+> current-most version of the debuggers (v2.4 for python). Xdebug documentation
+> recommends the python implementation; the v5.2 doc shows the python version
+> being the only language to support all breakpoint types. This can be found
+> under **Breakpoint Properties**.
+
+```sh
+# Example - python proxy
+# Environment Variables are used.
+export PYTHONPATH=/path/to/pydbgpproxy/pythonlib;$PYTHONPATH
+# i = ide, d = debugger
+# defaults: -i 127.0.0.1:9001 -d 127.0.0.1:9000
+/path/to/pydbgpproxy
+```
 
 [//]: # (These are reference links. They get stripped out when rendered.)
 [vsm]: <https://img.shields.io/vscode-marketplace/v/felixfbecker.php-debug.svg?label=vs%20marketplace>
@@ -231,3 +282,9 @@ in CI on Linux and Windows against PHP 5.4, 5.6, 7.0 and XDebug 2.3, 2.4.
 [xDLSrc]: <https://xdebug.org/docs/install#source> "Install XDebug Src"
 [xWiz]: <https://xdebug.org/wizard.php> "Xdebug Installation Guide"
 [dbgp]: <https://xdebug.org/docs-dbgp.php#feature-names>
+[proxyDL]: <http://code.activestate.com/komodo/remotedebugging/>
+[proxyFeat]: <http://docs.activestate.com/komodo/5.2/debugger.html#dbgp_proxy>
+[nodeDL]: <https://nodejs.org/en/download/>
+[pecl]: <https://pecl.php.net/> "Pecl"
+[homebrew]: <https://brew.sh/> "Homebrew"
+[macports]: <https://www.macports.org/install.php> "MacPorts"
