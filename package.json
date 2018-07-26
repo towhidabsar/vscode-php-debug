@@ -45,8 +45,6 @@
     "xmldom": "^0.1.22"
   },
   "devDependencies": {
-    "@semantic-release/git": "^2.2.0",
-    "@semantic-release/github": "^2.0.0",
     "@types/chai": "4.0.6",
     "@types/chai-as-promised": "^7.1.0",
     "@types/file-url": "^2.0.0",
@@ -76,7 +74,6 @@
       "semantic-release-vsce",
       "@semantic-release/github"
     ],
-    "getLastRelease": "@semantic-release/git",
     "publish": [
       {
         "path": "semantic-release-vsce",
