@@ -1,15 +1,16 @@
 language: php
 
 php:
+  - '7.3'
   - '5.6'
-  - '7.1'
 env:
   global:
     - NODE_VERSION=8.9.3
     - NPM_VERSION=^6.3.0
     - BUILD_LEADER_ID=4
   matrix:
-    - XDEBUG_VERSION=2.5.5
+    - XDEBUG_VERSION=2.8.0
+    - XDEBUG_VERSION=2.7.2
 
 sudo: false
 
@@ -18,8 +19,12 @@ cache:
     - $HOME/.npm
 
 before_install:
-  - chmod ugo+x ./scripts/travis-beforeinstall.sh
-  - ./scripts/travis-beforeinstall.sh 'main'
+  - pecl channel-update pecl.php.net
+  - pecl install xdebug-${XDEBUG_VERSION} || true
+  - phpenv config-add travis-php.ini
+  - nvm install ${NODE_VERSION}
+  - nvm use ${NODE_VERSION}
+  - npm install -g npm@${NPM_VERSION} --depth 0
 
 install:
   - npm ci
@@ -35,13 +40,6 @@ after_success:
 
 jobs:
   include:
-    - stage: test
-      os: osx
-      osx_image: xcode10.2
-      language: generic
-      before_install:
-        - chmod ugo+x ./scripts/travis-beforeinstall.sh
-        - ./scripts/travis-beforeinstall.sh 'test'
     - stage: release
       language: node_js
       node_js: '8'
